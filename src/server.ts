@@ -1,6 +1,6 @@
 import Websocket from 'ws';
-import {DataTable} from './data-table.js';
-import {insertRows, startTableMutation} from './data-table-mutation.js';
+import {DataTable} from './data-table';
+import {insertRows, startTableMutation} from './data-table-mutation';
 
 const MUTATION_INSERT_PERIOD = 2000;
 const MUTATION_DELETE_PERIOD = 2000;
@@ -17,7 +17,7 @@ startTableMutation(table, MUTATION_INSERT_PERIOD,
                           MUTATION_MOVE_PERIOD);
 
 // init websocket server               
-const server = new Websocket.Server({ port: 3002 });
+const server = new Websocket.Server({ port: 3001 });
 
 server.on('connection', client => {
     console.log('client connected');
@@ -28,7 +28,7 @@ server.on('connection', client => {
 })
 
 // init table change monitorung and distribution of data changes  
-const onTableChange = (changes) => {
+const onTableChange = (changes: any) => {
     console.clear();
     console.table(table.getTable());
 

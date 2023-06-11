@@ -1,10 +1,20 @@
 import * as events from 'events';
 
-class DataTable extends events.EventEmitter {
-    index = 0;
-    table = [];
+interface TableRow {
+    id: number;
+    text: string;
+}
 
-    getNewId() {
+interface TableShift {
+    from: number;
+    to: number;
+}
+
+class DataTable extends events.EventEmitter {
+    private index: number = 0;
+    private table: Array<TableRow> = [];
+
+    private getNewId() : number {
         return this.index++;
     }
 
@@ -12,19 +22,19 @@ class DataTable extends events.EventEmitter {
         return this.table;
     }
 
-    insert(data, pos = this.table.length) {
+    insert(data: Array<string>, pos = this.table.length) {
         const insertedData = data.map(text => ({id: this.getNewId(), text})) ;
         this.table.splice( pos, 0, ...insertedData);
         this.emit('insert', {rows: insertedData, pos});
     }
 
-    delete(indexes) {
+    delete(indexes: Array<number>) {
         this.table = this.table.filter(row => !indexes.includes(row.id));
         this.emit('delete', indexes);
     }
 
-    update(rows) {
-        const updatedData = [];
+    update(rows: Array<TableRow>) {
+        const updatedData: Array<TableRow> = [];
         rows.forEach(({id, text}) => {
             const index = this.table.findIndex((row) => row.id === id);
             if (index !== -1) {
@@ -35,7 +45,7 @@ class DataTable extends events.EventEmitter {
         this.emit('update', updatedData);
     }
 
-    move(shifts) {
+    move(shifts: Array<TableShift>) {
         shifts.forEach((shift) => {
             this.table.splice(shift.to, 0, this.table.splice(shift.from, 1)[0]);
         });
@@ -43,4 +53,4 @@ class DataTable extends events.EventEmitter {
     }
 }
 
-export {DataTable};
+export {DataTable, TableRow, TableShift};
